@@ -8,6 +8,7 @@ const navItems = [
   { name: "Diagnostic", page: "Diagnostic", icon: FlaskConical },
   { name: "Calculateur", page: "Calculator", icon: Calculator },
   { name: "Plantes", page: "PlantLibrary", icon: BookOpen },
+  { name: "Sources", page: "AdminSources", icon: Database },
 ];
 
 export default function Layout({ children, currentPageName }) {
