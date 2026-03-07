@@ -102,6 +102,49 @@ export default function AdminSources() {
     return sources.find(s => s.title === title);
   };
 
+  const handleImportSubmit = async (e) => {
+    e.preventDefault();
+    setImportError("");
+    if (!importFile) { setImportError("Veuillez sélectionner un fichier."); return; }
+    if (!importForm.title.trim()) { setImportError("Le titre est requis."); return; }
+
+    setUploading(true);
+    // Upload the file
+    const { file_url } = await base44.integrations.Core.UploadFile({ file: importFile });
+
+    // Create source record
+    const sourceRecord = await base44.entities.KnowledgeSource.create({
+      title: importForm.title.trim(),
+      author: importForm.author.trim(),
+      language: importForm.language,
+      file_url,
+      status: 'pending'
+    });
+    setSources(prev => [...prev, sourceRecord]);
+
+    // Trigger indexing
+    setUploading(false);
+    setShowImport(false);
+    setImportForm(EMPTY_FORM);
+    setImportFile(null);
+
+    await handleIndex({ ...importForm, title: importForm.title.trim(), file_url, _id: sourceRecord.id, _record: sourceRecord });
+  };
+
+  const handleIndexById = async (record) => {
+    const key = record.title;
+    setIndexing(prev => ({ ...prev, [key]: 'indexing' }));
+    await base44.functions.invoke('indexSource', {
+      source_id: record.id,
+      file_url: record.file_url,
+      title: record.title,
+      author: record.author,
+      language: record.language
+    });
+    setIndexing(prev => ({ ...prev, [key]: 'done' }));
+    await loadSources();
+  };
+
   if (loading) {
     return (
       <div style={{ textAlign: "center", padding: "4rem" }}>
