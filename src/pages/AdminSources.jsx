@@ -29,11 +29,19 @@ const SOURCES = [
   }
 ];
 
+const EMPTY_FORM = { title: "", author: "", language: "fr" };
+
 export default function AdminSources() {
   const [sources, setSources] = useState([]);
   const [indexing, setIndexing] = useState({});
   const [loading, setLoading] = useState(true);
   const [totalChunks, setTotalChunks] = useState(0);
+  const [showImport, setShowImport] = useState(false);
+  const [importForm, setImportForm] = useState(EMPTY_FORM);
+  const [importFile, setImportFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [importError, setImportError] = useState("");
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     loadSources();
