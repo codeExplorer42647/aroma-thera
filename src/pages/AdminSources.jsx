@@ -434,6 +434,78 @@ export default function AdminSources() {
         })}
       </div>
 
+      {/* Custom imported sources */}
+      {customSources.length > 0 && (
+        <div style={{ marginTop: "2rem" }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#3D2B1F", marginBottom: "1rem" }}>
+            Sources importées
+          </h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {customSources.map((record) => {
+              const state = indexing[record.title];
+              const isIndexing = state === 'indexing' || state === 'creating';
+              const isDone = record.status === 'indexed';
+
+              return (
+                <div key={record.id} className="aroma-card" style={{ padding: "1.5rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem", flexWrap: "wrap" }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.3rem" }}>
+                        <FileText size={16} color="#A0522D" />
+                        <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1rem", color: "#3D2B1F" }}>
+                          {record.title}
+                        </h3>
+                      </div>
+                      <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "#9AA889", marginBottom: "0.5rem" }}>
+                        {record.author || "—"} · {record.language === 'fr' ? 'Français' : 'Anglais'}
+                      </p>
+                      {isDone ? (
+                        <span style={{ background: "rgba(135,169,107,0.12)", border: "1px solid rgba(135,169,107,0.25)", borderRadius: 50, padding: "0.2rem 0.7rem", fontFamily: "Inter, sans-serif", fontSize: "0.72rem", color: "#6B8F52", fontWeight: 600 }}>
+                          ✓ Indexé — {record.chunks_count} chunks
+                        </span>
+                      ) : (
+                        <span style={{ background: "rgba(61,43,31,0.05)", borderRadius: 50, padding: "0.2rem 0.7rem", fontFamily: "Inter, sans-serif", fontSize: "0.72rem", color: "#9AA889" }}>
+                          {record.status === 'pending' ? 'En attente' : record.status}
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      {isIndexing ? (
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                          <Loader2 size={16} color="#87A96B" className="leaf-loading" />
+                          <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.8rem", color: "#87A96B" }}>Indexation…</span>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => handleIndexById(record)}
+                          style={{
+                            background: isDone ? "transparent" : undefined,
+                            border: isDone ? "1px solid rgba(135,169,107,0.3)" : undefined,
+                            borderRadius: isDone ? 8 : undefined,
+                            padding: isDone ? "0.35rem 0.75rem" : undefined,
+                            fontFamily: "Inter, sans-serif", fontSize: "0.75rem",
+                            color: "#87A96B", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.4rem"
+                          }}
+                          className={isDone ? "" : "btn-sage"}
+                        >
+                          <Database size={13} />
+                          {isDone ? "Ré-indexer" : "Indexer"}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  {isIndexing && (
+                    <div style={{ height: 3, background: "rgba(135,169,107,0.15)", borderRadius: 50, marginTop: "1rem", overflow: "hidden" }}>
+                      <div style={{ height: "100%", background: "linear-gradient(90deg, #87A96B, #6B8F52, #87A96B)", backgroundSize: "200% 100%", borderRadius: 50, animation: "shimmer 1.5s ease infinite", width: "60%" }} />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <style>{`
         @keyframes shimmer {
           0% { background-position: 200% center; }
