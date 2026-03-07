@@ -186,9 +186,9 @@ export default function AdminSources() {
         ))}
       </div>
 
-      {/* Index All button */}
-      {!allIndexed && (
-        <div style={{ marginBottom: "1.5rem", textAlign: "right" }}>
+      {/* Toolbar */}
+      <div style={{ marginBottom: "1.5rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+        {!allIndexed && (
           <button
             onClick={handleIndexAll}
             className="btn-sage"
@@ -198,7 +198,125 @@ export default function AdminSources() {
             <Zap size={16} />
             Indexer toutes les sources
           </button>
+        )}
+        <div style={{ marginLeft: "auto" }}>
+          <button
+            onClick={() => { setShowImport(!showImport); setImportError(""); }}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: "0.5rem",
+              background: showImport ? "rgba(160,82,45,0.08)" : "transparent",
+              border: "1.5px solid rgba(160,82,45,0.35)",
+              borderRadius: 50, padding: "0.55rem 1.2rem",
+              fontFamily: "Inter, sans-serif", fontSize: "0.85rem",
+              color: "#A0522D", cursor: "pointer", transition: "all 0.2s"
+            }}
+          >
+            {showImport ? <X size={15} /> : <Plus size={15} />}
+            {showImport ? "Annuler" : "Importer une source"}
+          </button>
         </div>
+      </div>
+
+      {/* Import Form */}
+      {showImport && (
+        <form onSubmit={handleImportSubmit} className="aroma-card fade-in-up" style={{ padding: "1.75rem", marginBottom: "1.5rem" }}>
+          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#3D2B1F", marginBottom: "1.25rem" }}>
+            Nouvelle source documentaire
+          </h3>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
+            <div>
+              <label style={{ fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "#7A6558", fontWeight: 600, display: "block", marginBottom: "0.4rem" }}>
+                Titre *
+              </label>
+              <input
+                className="aroma-input"
+                placeholder="Titre du livre"
+                value={importForm.title}
+                onChange={e => setImportForm(f => ({ ...f, title: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label style={{ fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "#7A6558", fontWeight: 600, display: "block", marginBottom: "0.4rem" }}>
+                Auteur
+              </label>
+              <input
+                className="aroma-input"
+                placeholder="Auteur(s)"
+                value={importForm.author}
+                onChange={e => setImportForm(f => ({ ...f, author: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "1rem", marginBottom: "1.25rem" }}>
+            <div>
+              <label style={{ fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "#7A6558", fontWeight: 600, display: "block", marginBottom: "0.4rem" }}>
+                Langue
+              </label>
+              <select
+                className="aroma-input"
+                value={importForm.language}
+                onChange={e => setImportForm(f => ({ ...f, language: e.target.value }))}
+                style={{ cursor: "pointer" }}
+              >
+                <option value="fr">Français</option>
+                <option value="en">Anglais</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "#7A6558", fontWeight: 600, display: "block", marginBottom: "0.4rem" }}>
+                Fichier Markdown / Texte *
+              </label>
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                style={{
+                  border: importFile ? "1.5px solid rgba(135,169,107,0.5)" : "1.5px dashed rgba(135,169,107,0.4)",
+                  borderRadius: 12, padding: "0.65rem 1rem",
+                  background: importFile ? "rgba(135,169,107,0.06)" : "rgba(254,254,254,0.9)",
+                  cursor: "pointer", display: "flex", alignItems: "center", gap: "0.6rem",
+                  fontFamily: "Inter, sans-serif", fontSize: "0.85rem",
+                  color: importFile ? "#6B8F52" : "#9AA889", transition: "all 0.2s"
+                }}
+              >
+                {importFile ? <FileText size={15} color="#6B8F52" /> : <Upload size={15} color="#9AA889" />}
+                {importFile ? importFile.name : "Cliquez pour sélectionner un fichier (.md, .txt)"}
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".md,.txt,text/plain,text/markdown"
+                style={{ display: "none" }}
+                onChange={e => setImportFile(e.target.files[0] || null)}
+              />
+            </div>
+          </div>
+
+          {importError && (
+            <div style={{ color: "#E74C3C", fontFamily: "Inter, sans-serif", fontSize: "0.8rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+              <AlertCircle size={14} /> {importError}
+            </div>
+          )}
+
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
+            <button
+              type="button"
+              onClick={() => { setShowImport(false); setImportFile(null); setImportForm(EMPTY_FORM); }}
+              style={{ background: "transparent", border: "1px solid rgba(61,43,31,0.15)", borderRadius: 50, padding: "0.55rem 1.25rem", fontFamily: "Inter, sans-serif", fontSize: "0.85rem", color: "#7A6558", cursor: "pointer" }}
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              className="btn-sienna"
+              disabled={uploading}
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
+            >
+              {uploading ? <Loader2 size={15} className="leaf-loading" /> : <Upload size={15} />}
+              {uploading ? "Upload en cours…" : "Importer & Indexer"}
+            </button>
+          </div>
+        </form>
       )}
 
       {/* Source list */}
