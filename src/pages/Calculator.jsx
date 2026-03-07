@@ -380,6 +380,9 @@ export default function Calculator() {
           Exemple : 30ml × 3% × 25 = <strong>22,5 gouttes ≈ 23 gouttes</strong> d'HE au total.
           Le reste est complété par l'huile végétale porteuse.
         </p>
+        <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.73rem", color: "#9AA889", marginTop: "0.4rem", lineHeight: 1.6, borderTop: "1px solid rgba(135,169,107,0.15)", paddingTop: "0.5rem" }}>
+          ⚠️ <em>Estimation valable pour un compte-gouttes standard de pharmacie (20 gttes/ml). La taille réelle d'une goutte varie selon la viscosité de l'huile : les huiles épaisses (Santal, Myrrhe, Vétiver) produisent des gouttes plus grosses, les huiles fines (Citrus, Menthe) des gouttes plus petites.</em>
+        </p>
       </div>
 
       <Disclaimer />
