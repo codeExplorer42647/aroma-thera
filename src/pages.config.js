@@ -51,6 +51,7 @@ import Home from './pages/Home';
 import Diagnostic from './pages/Diagnostic';
 import Calculator from './pages/Calculator';
 import PlantLibrary from './pages/PlantLibrary';
+import AdminSources from './pages/AdminSources';
 import __Layout from './Layout.jsx';
 
 
@@ -59,6 +60,7 @@ export const PAGES = {
     "Diagnostic": Diagnostic,
     "Calculator": Calculator,
     "PlantLibrary": PlantLibrary,
+    "AdminSources": AdminSources,
 }
 
 export const pagesConfig = {
