@@ -83,7 +83,7 @@ body {
 
 /* Sage button */
 .btn-sage {
-  background: linear-gradient(135deg, var(--sage), var(--sage-dark));
+  background: linear-gradient(135deg, var(--sage-dark), #4A6B38);
   color: white;
   border-radius: 50px;
   padding: 0.65rem 1.75rem;
