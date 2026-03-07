@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Leaf, FlaskConical, BookOpen, Calculator, Menu, X } from "lucide-react";
+import { Leaf, FlaskConical, BookOpen, Calculator, Menu, X, Database } from "lucide-react";
 
 const navItems = [
   { name: "Accueil", page: "Home", icon: Leaf },
