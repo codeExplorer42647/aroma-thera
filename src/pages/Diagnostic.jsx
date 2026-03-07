@@ -66,7 +66,31 @@ export default function Diagnostic() {
 
   const handleSubmit = async () => {
     setLoading(true);
-    const prompt = buildPrompt();
+
+    // Fetch RAG context from knowledge base
+    let ragContext = "";
+    const topicMap = {
+      "Stress & Anxiété": "anxiety-stress",
+      "Troubles du sommeil": "sleep",
+      "Douleurs musculaires": "pain",
+      "Maux de tête": "pain",
+      "Problèmes digestifs": "digestion",
+      "Fatigue chronique": "general",
+      "Infections respiratoires": "respiratory",
+      "Problèmes cutanés": "skin",
+    };
+    const topicHint = topicMap[form.symptom] || "general";
+
+    const ragRes = await base44.functions.invoke('ragQuery', {
+      query: `${form.symptom} ${form.symptom_detail} aromatherapy essential oil treatment`,
+      topic_hint: topicHint,
+      top_k: 6
+    });
+    if (ragRes?.data?.context) {
+      ragContext = ragRes.data.context;
+    }
+
+    const prompt = buildPrompt(ragContext);
     const res = await base44.integrations.Core.InvokeLLM({
       prompt,
       response_json_schema: {
@@ -102,8 +126,11 @@ export default function Diagnostic() {
     setLoading(false);
   };
 
-  const buildPrompt = () => `
-Tu es un expert en aromathérapie et phytothérapie. Génère une recommandation personnalisée basée sur ce profil patient :
+  const buildPrompt = (ragContext = "") => `
+Tu es un expert en aromathérapie et phytothérapie. Génère une recommandation personnalisée basée sur ce profil patient.
+${ragContext ? `\n## SOURCES DOCUMENTAIRES DE RÉFÉRENCE (base RAG)\nUtilise PRIORITAIREMENT ces extraits de livres spécialisés pour fonder tes recommandations :\n\n${ragContext}\n\n---\n` : ""}
+
+PROFIL PATIENT :
 
 SYMPTÔME PRINCIPAL : ${form.symptom}
 Détails : ${form.symptom_detail || "Non précisé"}
