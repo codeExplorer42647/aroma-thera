@@ -154,6 +154,9 @@ export default function AdminSources() {
   }
 
   const allIndexed = SOURCES.every(s => getSourceStatus(s.title)?.status === 'indexed');
+  // Custom sources = sources in DB that are not in the static SOURCES list
+  const staticTitles = new Set(SOURCES.map(s => s.title));
+  const customSources = sources.filter(s => !staticTitles.has(s.title));
 
   return (
     <div className="fade-in-up" style={{ maxWidth: 760, margin: "0 auto" }}>
