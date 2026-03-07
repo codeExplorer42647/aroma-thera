@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
-import { BookOpen, Loader2, CheckCircle, AlertCircle, Database, Zap } from "lucide-react";
+import { BookOpen, Loader2, CheckCircle, AlertCircle, Database, Zap, Plus, Upload, X, FileText } from "lucide-react";
 
 const SOURCES = [
   {
