@@ -172,7 +172,7 @@ export default function AdminSources() {
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", marginBottom: "2rem" }}>
         {[
-          { label: "Sources disponibles", value: SOURCES.length, icon: BookOpen, color: "#87A96B" },
+          { label: "Sources totales", value: SOURCES.length + customSources.length, icon: BookOpen, color: "#87A96B" },
           { label: "Sources indexées", value: sources.filter(s => s.status === 'indexed').length, icon: CheckCircle, color: "#6B8F52" },
           { label: "Chunks en base", value: totalChunks.toLocaleString(), icon: Database, color: "#A0522D" }
         ].map(({ label, value, icon: Icon, color }) => (
