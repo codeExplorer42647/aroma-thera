@@ -258,7 +258,6 @@ Réponds maintenant en JSON strict selon le schéma fourni.`;
     });
 
     if (res?.is_complete && res?.protocol) {
-      setProtocol(res.protocol);
       const finalMessages = [...newMessages, {
         role: "assistant",
         content: "J'ai maintenant toutes les informations nécessaires. J'ai analysé les chapitres pertinents de nos sources de référence pour vous proposer un protocole fondé sur la littérature spécialisée. Voici votre synergie personnalisée ✨"
