@@ -30,6 +30,52 @@ export default function PlantLibrary() {
     });
   }, []);
 
+  const generatePlantProfile = async () => {
+    if (!genName.trim()) return;
+    setGenerating(true);
+    const res = await base44.integrations.Core.InvokeLLM({
+      prompt: `Recherche dans les sources médicales indexées (notamment Price, Bone et Rhind) toutes les données sur la plante "${genName.trim()}". Analyse le texte de manière exhaustive. Génère un profil complet et précis en aromathérapie/phytothérapie clinique. Réponds UNIQUEMENT en français.`,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          common_name: { type: "string" },
+          latin_name: { type: "string" },
+          chemotype: { type: "string" },
+          plant_type: { type: "string", enum: ["huile_essentielle", "hydrolat", "huile_vegetale", "plante_seche", "teinture"] },
+          description: { type: "string" },
+          properties: { type: "array", items: { type: "string" } },
+          indications: { type: "array", items: { type: "string" } },
+          contraindications: { type: "array", items: { type: "string" } },
+          usage_routes: { type: "array", items: { type: "string" } },
+          max_dilution_cutaneous: { type: "number" },
+          is_photosensitizing: { type: "boolean" },
+          is_dermocaustic: { type: "boolean" },
+          is_safe_pregnancy: { type: "boolean" },
+          aroma_notes: { type: "string" },
+          origin: { type: "string" },
+          protocol_notes: { type: "string" }
+        }
+      }
+    });
+
+    // Normalize arrays
+    const plantData = {
+      ...res,
+      common_name: res.common_name || genName.trim(),
+      properties: Array.isArray(res.properties) ? res.properties : [],
+      indications: Array.isArray(res.indications) ? res.indications : [],
+      contraindications: Array.isArray(res.contraindications) ? res.contraindications : [],
+      usage_routes: Array.isArray(res.usage_routes) ? res.usage_routes : [],
+    };
+
+    const created = await base44.entities.Plant.create(plantData);
+    setPlants(prev => [created, ...prev]);
+    setGenerating(false);
+    setShowGenModal(false);
+    setGenName("");
+    setSelected(created);
+  };
+
   const filtered = plants.filter((p) => {
     const matchSearch = !search ||
     p.common_name?.toLowerCase().includes(search.toLowerCase()) ||
