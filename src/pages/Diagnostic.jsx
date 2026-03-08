@@ -259,13 +259,18 @@ Réponds maintenant en JSON strict selon le schéma fourni.`;
 
     if (res?.is_complete && res?.protocol) {
       setProtocol(res.protocol);
-      setMessages(prev => [...prev, {
+      const finalMessages = [...newMessages, {
         role: "assistant",
         content: "J'ai maintenant toutes les informations nécessaires. J'ai analysé les chapitres pertinents de nos sources de référence pour vous proposer un protocole fondé sur la littérature spécialisée. Voici votre synergie personnalisée ✨"
-      }]);
+      }];
+      setProtocol(res.protocol);
+      setMessages(finalMessages);
+      saveSession({ messages: finalMessages, protocol: res.protocol, ragContext: ctx, ragReadingStrategy: strategy });
     } else {
       const question = res?.next_question || "Pouvez-vous me donner plus de détails ?";
-      setMessages(prev => [...prev, { role: "assistant", content: question }]);
+      const updatedMessages = [...newMessages, { role: "assistant", content: question }];
+      setMessages(updatedMessages);
+      saveSession({ messages: updatedMessages, protocol: null, ragContext: ctx, ragReadingStrategy: strategy });
     }
 
     setLoading(false);
