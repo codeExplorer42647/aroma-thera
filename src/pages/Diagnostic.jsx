@@ -175,7 +175,7 @@ export default function Diagnostic() {
   const startConversation = async () => {
     setMessages([{
       role: "assistant",
-      content: "Bonjour ! Je suis ArômaThéra, votre conseiller en aromathérapie et phytothérapie. 🌿\n\nPour vous proposer un protocole personnalisé et sûr, je vais vous poser quelques questions.\n\n**Quel est le symptôme ou l'inconfort principal pour lequel vous souhaitez un accompagnement naturel ?**"
+      content: "Bonjour ! Je suis ArômaThéra, votre conseiller en aromathérapie et phytothérapie. 🌿\n\nPour vous proposer un protocole personnalisé et sûr — adapté à votre profil biologique, à la voie d'administration la plus efficace et à la durée de votre traitement — je vais vous poser quelques questions.\n\n**Quel est le symptôme ou l'inconfort principal pour lequel vous souhaitez un accompagnement naturel ?**"
     }]);
   };
 
