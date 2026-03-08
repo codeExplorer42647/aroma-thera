@@ -261,15 +261,22 @@ export default function DiagnosticProtocol({ protocol }) {
 }
 
 // ─── Sub-components ─────────────────────────────────────────────────────────
-function IngredientRow({ ingredient }) {
+function IngredientRow({ ingredient, onClick }) {
   return (
-    <div style={{
-      padding: "0.9rem 1rem",
-      background: "rgba(254,254,254,0.9)",
-      borderRadius: 12,
-      border: "1px solid rgba(135,169,107,0.18)",
-      boxShadow: "0 1px 6px rgba(61,43,31,0.04)"
-    }}>
+    <div
+      onClick={onClick}
+      style={{
+        padding: "0.9rem 1rem",
+        background: "rgba(254,254,254,0.9)",
+        borderRadius: 12,
+        border: "1px solid rgba(135,169,107,0.18)",
+        boxShadow: "0 1px 6px rgba(61,43,31,0.04)",
+        cursor: "pointer",
+        transition: "all 0.18s ease"
+      }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(135,169,107,0.45)"; e.currentTarget.style.boxShadow = "0 3px 12px rgba(61,43,31,0.09)"; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(135,169,107,0.18)"; e.currentTarget.style.boxShadow = "0 1px 6px rgba(61,43,31,0.04)"; }}
+    >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.75rem" }}>
         <div style={{ flex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem", flexWrap: "wrap" }}>
