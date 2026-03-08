@@ -59,7 +59,7 @@ export default function DiagnosticProtocol({ protocol }) {
         {/* HE list */}
         <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", marginBottom: "1.25rem" }}>
           {heIngredients.map((ing, i) => (
-            <IngredientRow key={i} ingredient={ing} isHE />
+            <IngredientRow key={i} ingredient={ing} onClick={() => setSelectedIngredient(ing)} />
           ))}
         </div>
 
