@@ -156,22 +156,26 @@ export default function Diagnostic() {
     setMessages(newMessages);
     setInput("");
     setLoading(true);
+    setLoadingPhase("thinking");
 
-    // Fetch RAG context on first user message
-    const ctx = await fetchRagContext(text);
+    // Fetch RAG context (long context chapters) on first user message
+    const { context: ctx, strategy } = await fetchRagContext(text);
+
+    setLoadingPhase("analyzing");
 
     // Build conversation history string for the LLM
     const historyText = newMessages
       .map(m => `${m.role === "user" ? "Patient" : "ArômaThéra"}: ${m.content}`)
       .join("\n\n");
 
-    const prompt = `${buildSystemPrompt(ctx)}
+    const prompt = `${buildSystemPrompt(ctx, strategy)}
 
 ## HISTORIQUE DE LA CONVERSATION
 ${historyText}
 
 Réponds maintenant en JSON strict selon le schéma fourni.`;
 
+    setLoadingPhase("thinking");
     const res = await base44.integrations.Core.InvokeLLM({
       prompt,
       response_json_schema: RESPONSE_SCHEMA
@@ -181,7 +185,7 @@ Réponds maintenant en JSON strict selon le schéma fourni.`;
       setProtocol(res.protocol);
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: "J'ai maintenant toutes les informations nécessaires pour vous proposer un protocole personnalisé. Voici votre synergie adaptée ✨"
+        content: "J'ai maintenant toutes les informations nécessaires. J'ai analysé les chapitres pertinents de nos sources de référence pour vous proposer un protocole fondé sur la littérature spécialisée. Voici votre synergie personnalisée ✨"
       }]);
     } else {
       const question = res?.next_question || "Pouvez-vous me donner plus de détails ?";
@@ -189,6 +193,7 @@ Réponds maintenant en JSON strict selon le schéma fourni.`;
     }
 
     setLoading(false);
+    setLoadingPhase("");
     setTimeout(() => inputRef.current?.focus(), 100);
   };
 
