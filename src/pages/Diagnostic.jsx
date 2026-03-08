@@ -42,9 +42,28 @@ const RESPONSE_SCHEMA = {
         },
         total_drops_he: { type: "number" },
         total_percentage: { type: "number" },
-        application_route: { type: "string" },
+        application_route: { type: "string", description: "cutanée | orale | respiratoire | mixte" },
+        oral_details: {
+          type: "object",
+          description: "Renseigné uniquement si voie orale utilisée",
+          properties: {
+            drops_per_dose: { type: "number" },
+            support: { type: "string", description: "Ex: capsule végétale, miel, huile d'olive" },
+            doses_per_day: { type: "number" },
+            meal_timing: { type: "string", description: "Ex: avant les repas, pendant, à jeun" }
+          }
+        },
+        respiratory_details: {
+          type: "object",
+          description: "Renseigné uniquement si voie respiratoire utilisée",
+          properties: {
+            method: { type: "string", description: "Ex: diffusion, inhalation sèche, bol d'inhalation" },
+            duration_minutes: { type: "number" },
+            frequency_per_day: { type: "number" }
+          }
+        },
         frequency: { type: "string" },
-        duration: { type: "string" },
+        treatment_duration: { type: "string", description: "Durée totale recommandée (court/moyen/long terme)" },
         protocol_instructions: { type: "string" },
         general_advice: { type: "string" },
         when_to_see_doctor: { type: "string" },
