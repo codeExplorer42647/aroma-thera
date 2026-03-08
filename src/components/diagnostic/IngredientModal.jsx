@@ -42,13 +42,12 @@ export default function IngredientModal({ ingredient, onClose }) {
     if (found) {
       const librarySheet = {
         description: found.description || "",
-        properties: found.properties || [],
-        contraindications: found.contraindications || [],
+        properties: Array.isArray(found.properties) ? found.properties : [],
+        contraindications: Array.isArray(found.contraindications) ? found.contraindications : [],
         safe_use_tips: [],
-        recommended_routes: (found.usage_routes || []).join(", "),
+        recommended_routes: Array.isArray(found.usage_routes) ? found.usage_routes.join(", ") : "",
         max_dilution: found.max_dilution_cutaneous ? `${found.max_dilution_cutaneous}%` : null,
         drug_interactions: found.protocol_notes || null,
-        _libraryPlant: found
       };
       sheetCache.set(nameKey, { sheet: librarySheet, fromLibrary: true });
       setSheet(librarySheet);
@@ -90,9 +89,16 @@ Réponds UNIQUEMENT en français.`,
       }
     });
 
-    // Cache the generated sheet
-    sheetCache.set(nameKey, { sheet: res, fromLibrary: false });
-    setSheet(res);
+    // Normalize arrays in case LLM returns unexpected types
+    const normalized = {
+      ...res,
+      properties: Array.isArray(res?.properties) ? res.properties : [],
+      contraindications: Array.isArray(res?.contraindications) ? res.contraindications : [],
+      safe_use_tips: Array.isArray(res?.safe_use_tips) ? res.safe_use_tips : [],
+    };
+
+    sheetCache.set(nameKey, { sheet: normalized, fromLibrary: false });
+    setSheet(normalized);
     setIsFromLibrary(false);
     setLoadingSheet(false);
   }
@@ -104,17 +110,16 @@ Réponds UNIQUEMENT en français.`,
       latin_name: ingredient.latin_name || "",
       plant_type: ingredient.type === "HV" ? "huile_vegetale" : "huile_essentielle",
       description: sheet?.description || ingredient.role || "",
-      properties: sheet?.properties || [],
-      contraindications: sheet?.contraindications || [],
+      properties: Array.isArray(sheet?.properties) ? sheet.properties : [],
+      contraindications: Array.isArray(sheet?.contraindications) ? sheet.contraindications : [],
       is_photosensitizing: ingredient.is_photosensitizing || false,
       is_dermocaustic: ingredient.is_dermocaustic || false,
       protocol_notes: ingredient.source_reference || "",
       max_dilution_cutaneous: sheet?.max_dilution
-        ? parseFloat(sheet.max_dilution.replace(/[^0-9.]/g, ""))
+        ? parseFloat(sheet.max_dilution.replace(/[^0-9.]/g, "")) || null
         : null
     };
     await base44.entities.Plant.create(plantData);
-    // Update cache to mark as from library
     const nameKey = ingredient.name?.toLowerCase().trim();
     sheetCache.set(nameKey, { sheet, fromLibrary: true });
     setAddingToLibrary(false);
@@ -192,7 +197,6 @@ Réponds UNIQUEMENT en français.`,
 
         {/* Content */}
         <div style={{ padding: "1.5rem 1.75rem" }}>
-          {/* Role in protocol */}
           {ingredient.role && (
             <div style={{
               padding: "0.85rem 1rem", background: "rgba(135,169,107,0.06)",
@@ -211,7 +215,7 @@ Réponds UNIQUEMENT en français.`,
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "2rem", gap: "0.75rem" }}>
               <Loader2 size={28} color="#87A96B" style={{ animation: "spin 1s linear infinite" }} />
               <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.85rem", color: "#9AA889", margin: 0 }}>
-                {isFromLibrary ? "Chargement depuis la bibliothèque…" : "Génération de la fiche en cours…"}
+                Génération de la fiche en cours…
               </p>
               <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
             </div>
