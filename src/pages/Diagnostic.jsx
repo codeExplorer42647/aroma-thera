@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import AlertBanner from "@/components/diagnostic/AlertBanner";
 import Disclaimer from "@/components/diagnostic/Disclaimer";
 import DiagnosticProtocol from "@/components/diagnostic/DiagnosticProtocol";
-import { Leaf, Send, RotateCcw, Loader2, MessageCircle } from "lucide-react";
+import { Leaf, Send, RotateCcw, Loader2, MessageCircle, BookOpen, Search } from "lucide-react";
 
 // ─── LLM JSON Schema ──────────────────────────────────────────────────────────
 const RESPONSE_SCHEMA = {
