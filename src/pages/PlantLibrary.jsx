@@ -292,8 +292,8 @@ function PlantCard({ plant, onSelect }) {
         <span key={i} style={{
           fontFamily: "Inter, sans-serif",
           fontSize: "0.7rem",
-          color: "#7A6558",
-          background: "rgba(61,43,31,0.05)",
+          color: "#4A3828",
+          background: "rgba(61,43,31,0.07)",
           padding: "0.2rem 0.5rem",
           borderRadius: 6
         }}>{p}</span>
