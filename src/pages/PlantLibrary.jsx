@@ -19,6 +19,9 @@ export default function PlantLibrary() {
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("Tous");
   const [selected, setSelected] = useState(null);
+  const [showGenModal, setShowGenModal] = useState(false);
+  const [genName, setGenName] = useState("");
+  const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
     base44.entities.Plant.list("-created_date", 100).then((data) => {
