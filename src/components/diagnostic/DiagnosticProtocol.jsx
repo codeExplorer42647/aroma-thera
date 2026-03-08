@@ -318,6 +318,9 @@ function IngredientRow({ ingredient, onClick }) {
               </span>
             </div>
           )}
+          <div style={{ fontFamily: "Inter, sans-serif", fontSize: "0.67rem", color: "#87A96B", marginTop: "0.25rem", fontStyle: "italic" }}>
+            Cliquer pour la fiche détaillée →
+          </div>
         </div>
         <div style={{ textAlign: "right", flexShrink: 0 }}>
           {ingredient.drops != null && (
