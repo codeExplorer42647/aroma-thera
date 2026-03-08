@@ -1,5 +1,5 @@
 import AlertBanner from "./AlertBanner";
-import { Leaf, Droplets, Clock, Calendar, BookOpen, CheckCircle } from "lucide-react";
+import { Leaf, Droplets, Clock, Calendar, BookOpen, CheckCircle, Wind, Pill } from "lucide-react";
 
 export default function DiagnosticProtocol({ protocol }) {
   const heIngredients = (protocol.synergy || []).filter(i => i.type !== "HV");
