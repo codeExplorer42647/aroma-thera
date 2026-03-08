@@ -1,23 +1,64 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import {
   X, Leaf, AlertTriangle, ShieldCheck, BookOpen, Plus, Check, Loader2,
-  Droplets, Sun, FlaskConical
+  Droplets, Sun, FlaskConical, Library
 } from "lucide-react";
+
+// Module-level cache to avoid regenerating sheets across multiple clicks
+const sheetCache = new Map();
 
 export default function IngredientModal({ ingredient, onClose }) {
   const [sheet, setSheet] = useState(null);
-  const [loadingSheet, setLoadingSheet] = useState(false);
+  const [loadingSheet, setLoadingSheet] = useState(true);
   const [addingToLibrary, setAddingToLibrary] = useState(false);
   const [addedToLibrary, setAddedToLibrary] = useState(false);
+  const [isFromLibrary, setIsFromLibrary] = useState(false);
 
-  // Load AI-generated sheet on mount
-  useState(() => {
+  useEffect(() => {
     loadSheet();
-  });
+  }, [ingredient.name]);
 
   async function loadSheet() {
     setLoadingSheet(true);
+    const nameKey = ingredient.name?.toLowerCase().trim();
+
+    // 1. Check module-level cache first
+    if (sheetCache.has(nameKey)) {
+      const cached = sheetCache.get(nameKey);
+      setSheet(cached.sheet);
+      setIsFromLibrary(cached.fromLibrary);
+      setAddedToLibrary(cached.fromLibrary);
+      setLoadingSheet(false);
+      return;
+    }
+
+    // 2. Check if already in the Plant library
+    const plants = await base44.entities.Plant.list("-created_date", 200);
+    const found = plants.find(p =>
+      p.common_name?.toLowerCase().trim() === nameKey
+    );
+
+    if (found) {
+      const librarySheet = {
+        description: found.description || "",
+        properties: found.properties || [],
+        contraindications: found.contraindications || [],
+        safe_use_tips: [],
+        recommended_routes: (found.usage_routes || []).join(", "),
+        max_dilution: found.max_dilution_cutaneous ? `${found.max_dilution_cutaneous}%` : null,
+        drug_interactions: found.protocol_notes || null,
+        _libraryPlant: found
+      };
+      sheetCache.set(nameKey, { sheet: librarySheet, fromLibrary: true });
+      setSheet(librarySheet);
+      setIsFromLibrary(true);
+      setAddedToLibrary(true);
+      setLoadingSheet(false);
+      return;
+    }
+
+    // 3. Generate via LLM
     const res = await base44.integrations.Core.InvokeLLM({
       prompt: `Tu es un expert en aromathérapie clinique. Génère une fiche détaillée pour l'ingrédient suivant :
 
@@ -48,7 +89,11 @@ Réponds UNIQUEMENT en français.`,
         }
       }
     });
+
+    // Cache the generated sheet
+    sheetCache.set(nameKey, { sheet: res, fromLibrary: false });
     setSheet(res);
+    setIsFromLibrary(false);
     setLoadingSheet(false);
   }
 
@@ -69,8 +114,12 @@ Réponds UNIQUEMENT en français.`,
         : null
     };
     await base44.entities.Plant.create(plantData);
+    // Update cache to mark as from library
+    const nameKey = ingredient.name?.toLowerCase().trim();
+    sheetCache.set(nameKey, { sheet, fromLibrary: true });
     setAddingToLibrary(false);
     setAddedToLibrary(true);
+    setIsFromLibrary(true);
   }
 
   return (
@@ -92,9 +141,9 @@ Réponds UNIQUEMENT en français.`,
         {/* Header */}
         <div style={{
           padding: "1.5rem 1.75rem 1.25rem",
-          background: "linear-gradient(135deg, rgba(135,169,107,0.08), rgba(245,245,220,0.5))",
+          background: "#FEFEFE",
           borderBottom: "1px solid rgba(135,169,107,0.12)",
-          position: "sticky", top: 0, background: "#FEFEFE", borderRadius: "20px 20px 0 0"
+          position: "sticky", top: 0, borderRadius: "20px 20px 0 0"
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <div style={{ flex: 1 }}>
@@ -110,6 +159,16 @@ Réponds UNIQUEMENT en français.`,
                   {ingredient.name}
                 </h2>
                 <TypeBadge type={ingredient.type} />
+                {isFromLibrary && (
+                  <span style={{
+                    display: "inline-flex", alignItems: "center", gap: "0.25rem",
+                    background: "rgba(135,169,107,0.12)", border: "1px solid rgba(135,169,107,0.3)",
+                    borderRadius: 50, padding: "0.15rem 0.55rem",
+                    fontFamily: "Inter, sans-serif", fontSize: "0.63rem", color: "#6B8F52", fontWeight: 600
+                  }}>
+                    <Library size={9} /> En bibliothèque
+                  </span>
+                )}
               </div>
               {ingredient.latin_name && (
                 <em style={{ fontFamily: "Inter, sans-serif", fontSize: "0.8rem", color: "#9AA889", marginLeft: "2.6rem" }}>
@@ -152,41 +211,36 @@ Réponds UNIQUEMENT en français.`,
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "2rem", gap: "0.75rem" }}>
               <Loader2 size={28} color="#87A96B" style={{ animation: "spin 1s linear infinite" }} />
               <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.85rem", color: "#9AA889", margin: 0 }}>
-                Génération de la fiche en cours…
+                {isFromLibrary ? "Chargement depuis la bibliothèque…" : "Génération de la fiche en cours…"}
               </p>
               <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
             </div>
           ) : sheet ? (
             <>
-              {/* Description */}
               {sheet.description && (
                 <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.88rem", color: "#5A4A3A", lineHeight: 1.7, marginBottom: "1.25rem" }}>
                   {sheet.description}
                 </p>
               )}
 
-              {/* Properties */}
               {sheet.properties?.length > 0 && (
                 <Section icon={<FlaskConical size={14} color="#6B8F52" />} title="Propriétés thérapeutiques" color="#6B8F52">
                   {sheet.properties.map((p, i) => <ListItem key={i} text={p} color="#6B8F52" />)}
                 </Section>
               )}
 
-              {/* Contraindications */}
               {sheet.contraindications?.length > 0 && (
                 <Section icon={<AlertTriangle size={14} color="#C0392B" />} title="Contre-indications & précautions" color="#C0392B">
                   {sheet.contraindications.map((c, i) => <ListItem key={i} text={c} color="#C0392B" />)}
                 </Section>
               )}
 
-              {/* Safe use */}
               {sheet.safe_use_tips?.length > 0 && (
                 <Section icon={<ShieldCheck size={14} color="#A0522D" />} title="Conseils d'utilisation sécurisée" color="#A0522D">
                   {sheet.safe_use_tips.map((t, i) => <ListItem key={i} text={t} color="#A0522D" />)}
                 </Section>
               )}
 
-              {/* Quick stats */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.65rem", marginBottom: "1.25rem" }}>
                 {sheet.recommended_routes && (
                   <InfoBlock label="Voies recommandées" value={sheet.recommended_routes} icon={<Droplets size={13} color="#87A96B" />} />
@@ -196,7 +250,6 @@ Réponds UNIQUEMENT en français.`,
                 )}
               </div>
 
-              {/* Drug interactions */}
               {sheet.drug_interactions && (
                 <div style={{
                   padding: "0.85rem 1rem", background: "rgba(230,126,34,0.06)",
@@ -211,7 +264,6 @@ Réponds UNIQUEMENT en français.`,
                 </div>
               )}
 
-              {/* Source */}
               {ingredient.source_reference && (
                 <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "1.25rem" }}>
                   <BookOpen size={12} color="#9AA889" />
@@ -223,31 +275,33 @@ Réponds UNIQUEMENT en français.`,
             </>
           ) : null}
 
-          {/* Add to library button */}
-          <button
-            onClick={handleAddToLibrary}
-            disabled={addingToLibrary || addedToLibrary || loadingSheet}
-            style={{
-              width: "100%", padding: "0.75rem",
-              background: addedToLibrary
-                ? "linear-gradient(135deg, #6B8F52, #4A6B38)"
-                : "linear-gradient(135deg, rgba(135,169,107,0.15), rgba(135,169,107,0.25))",
-              border: "1.5px solid rgba(135,169,107,0.35)",
-              borderRadius: 12, cursor: addedToLibrary ? "default" : "pointer",
-              display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
-              fontFamily: "Inter, sans-serif", fontSize: "0.85rem", fontWeight: 600,
-              color: addedToLibrary ? "white" : "#6B8F52",
-              transition: "all 0.2s ease",
-              opacity: addingToLibrary ? 0.7 : 1
-            }}
-          >
-            {addingToLibrary
-              ? <><Loader2 size={15} style={{ animation: "spin 1s linear infinite" }} /> Ajout en cours…</>
-              : addedToLibrary
-                ? <><Check size={15} /> Ajouté à la bibliothèque</>
-                : <><Plus size={15} /> Ajouter à la bibliothèque de plantes</>
-            }
-          </button>
+          {/* Add to library button — hidden if already in library */}
+          {!isFromLibrary && !loadingSheet && (
+            <button
+              onClick={handleAddToLibrary}
+              disabled={addingToLibrary || addedToLibrary}
+              style={{
+                width: "100%", padding: "0.75rem",
+                background: addedToLibrary
+                  ? "linear-gradient(135deg, #6B8F52, #4A6B38)"
+                  : "linear-gradient(135deg, rgba(135,169,107,0.15), rgba(135,169,107,0.25))",
+                border: "1.5px solid rgba(135,169,107,0.35)",
+                borderRadius: 12, cursor: addedToLibrary ? "default" : "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
+                fontFamily: "Inter, sans-serif", fontSize: "0.85rem", fontWeight: 600,
+                color: addedToLibrary ? "white" : "#6B8F52",
+                transition: "all 0.2s ease",
+                opacity: addingToLibrary ? 0.7 : 1
+              }}
+            >
+              {addingToLibrary
+                ? <><Loader2 size={15} style={{ animation: "spin 1s linear infinite" }} /> Ajout en cours…</>
+                : addedToLibrary
+                  ? <><Check size={15} /> Ajouté à la bibliothèque</>
+                  : <><Plus size={15} /> Ajouter à la bibliothèque de plantes</>
+              }
+            </button>
+          )}
         </div>
       </div>
     </div>
