@@ -248,6 +248,14 @@ export default function DiagnosticProtocol({ protocol }) {
           </p>
         </div>
       )}
+
+      {/* Ingredient Modal */}
+      {selectedIngredient && (
+        <IngredientModal
+          ingredient={selectedIngredient}
+          onClose={() => setSelectedIngredient(null)}
+        />
+      )}
     </div>
   );
 }
