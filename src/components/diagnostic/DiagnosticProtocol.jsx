@@ -111,6 +111,67 @@ export default function DiagnosticProtocol({ protocol }) {
         )}
       </div>
 
+      {/* Oral Route Details */}
+      {protocol.oral_details && (
+        <div className="aroma-card" style={{ padding: "1.4rem", marginBottom: "1.25rem", borderLeft: "3px solid #A0522D" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.85rem" }}>
+            <Pill size={15} color="#A0522D" />
+            <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 700, color: "#A0522D", textTransform: "uppercase", letterSpacing: "0.07em" }}>
+              Posologie Voie Orale
+            </span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "0.65rem" }}>
+            {protocol.oral_details.drops_per_dose && (
+              <Stat label="Gouttes / prise" value={`${protocol.oral_details.drops_per_dose} gttes`} color="#A0522D" />
+            )}
+            {protocol.oral_details.doses_per_day && (
+              <Stat label="Prises / jour" value={`${protocol.oral_details.doses_per_day}x`} color="#A0522D" />
+            )}
+          </div>
+          {protocol.oral_details.support && (
+            <div style={{ marginTop: "0.75rem", padding: "0.6rem 0.9rem", background: "rgba(160,82,45,0.05)", borderRadius: 8 }}>
+              <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "#7A4020" }}>
+                <strong>Support :</strong> {protocol.oral_details.support}
+              </span>
+            </div>
+          )}
+          {protocol.oral_details.meal_timing && (
+            <div style={{ marginTop: "0.5rem", padding: "0.6rem 0.9rem", background: "rgba(160,82,45,0.05)", borderRadius: 8 }}>
+              <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "#7A4020" }}>
+                <strong>Moment :</strong> {protocol.oral_details.meal_timing}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Respiratory Route Details */}
+      {protocol.respiratory_details && (
+        <div className="aroma-card" style={{ padding: "1.4rem", marginBottom: "1.25rem", borderLeft: "3px solid #5B8DB8" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.85rem" }}>
+            <Wind size={15} color="#5B8DB8" />
+            <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 700, color: "#5B8DB8", textTransform: "uppercase", letterSpacing: "0.07em" }}>
+              Protocole Voie Respiratoire
+            </span>
+          </div>
+          {protocol.respiratory_details.method && (
+            <div style={{ padding: "0.6rem 0.9rem", background: "rgba(91,141,184,0.07)", borderRadius: 8, marginBottom: "0.65rem" }}>
+              <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.85rem", fontWeight: 600, color: "#3D2B1F" }}>
+                {protocol.respiratory_details.method}
+              </span>
+            </div>
+          )}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "0.65rem" }}>
+            {protocol.respiratory_details.duration_minutes && (
+              <Stat label="Durée / séance" value={`${protocol.respiratory_details.duration_minutes} min`} color="#5B8DB8" />
+            )}
+            {protocol.respiratory_details.frequency_per_day && (
+              <Stat label="Séances / jour" value={`${protocol.respiratory_details.frequency_per_day}x`} color="#5B8DB8" />
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Protocol Instructions */}
       {protocol.protocol_instructions && (
         <div className="aroma-card" style={{ padding: "1.4rem", marginBottom: "1.25rem" }}>
@@ -124,8 +185,8 @@ export default function DiagnosticProtocol({ protocol }) {
             {protocol.frequency && (
               <PillBadge icon={<Clock size={12} />} label={protocol.frequency} color="#6B8F52" bg="rgba(135,169,107,0.1)" />
             )}
-            {protocol.duration && (
-              <PillBadge icon={<Calendar size={12} />} label={protocol.duration} color="#A0522D" bg="rgba(160,82,45,0.08)" />
+            {(protocol.treatment_duration || protocol.duration) && (
+              <PillBadge icon={<Calendar size={12} />} label={protocol.treatment_duration || protocol.duration} color="#A0522D" bg="rgba(160,82,45,0.08)" />
             )}
           </div>
         </div>
