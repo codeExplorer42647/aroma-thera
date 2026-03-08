@@ -100,8 +100,10 @@ export default function Diagnostic() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingPhase, setLoadingPhase] = useState(""); // "searching" | "analyzing" | "thinking"
   const [protocol, setProtocol] = useState(null);
   const [ragContext, setRagContext] = useState("");
+  const [ragReadingStrategy, setRagReadingStrategy] = useState("");
   const [ragLoaded, setRagLoaded] = useState(false);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
