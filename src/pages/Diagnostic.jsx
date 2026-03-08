@@ -125,19 +125,26 @@ export default function Diagnostic() {
   };
 
   const fetchRagContext = async (userMessage) => {
-    if (ragLoaded) return ragContext;
+    if (ragLoaded) return { context: ragContext, strategy: ragReadingStrategy };
+
+    setLoadingPhase("searching");
     const topicKeywords = ["stress", "anxiété", "sommeil", "douleur", "digestion", "fatigue", "respiratoire", "peau", "infection"];
     const lower = userMessage.toLowerCase();
     const topic = topicKeywords.find(t => lower.includes(t)) || "general";
+
     const ragRes = await base44.functions.invoke("ragQuery", {
-      query: userMessage + " aromathérapie huile essentielle traitement",
+      query: userMessage + " aromathérapie huile essentielle synergie traitement contre-indication",
       topic_hint: topic,
-      top_k: 6
+      top_k: 5
     });
+
     const ctx = ragRes?.data?.context || "";
+    const strategy = ragRes?.data?.reading_strategy || "";
     setRagContext(ctx);
+    setRagReadingStrategy(strategy);
     setRagLoaded(true);
-    return ctx;
+    setLoadingPhase("analyzing");
+    return { context: ctx, strategy };
   };
 
   const handleSend = async () => {
