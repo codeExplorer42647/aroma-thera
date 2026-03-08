@@ -21,17 +21,17 @@ export default function PlantLibrary() {
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
-    base44.entities.Plant.list("-created_date", 100).then(data => {
+    base44.entities.Plant.list("-created_date", 100).then((data) => {
       setPlants(data);
       setLoading(false);
     });
   }, []);
 
-  const filtered = plants.filter(p => {
+  const filtered = plants.filter((p) => {
     const matchSearch = !search ||
-      p.common_name?.toLowerCase().includes(search.toLowerCase()) ||
-      p.latin_name?.toLowerCase().includes(search.toLowerCase()) ||
-      (p.properties || []).some(pr => pr.toLowerCase().includes(search.toLowerCase()));
+    p.common_name?.toLowerCase().includes(search.toLowerCase()) ||
+    p.latin_name?.toLowerCase().includes(search.toLowerCase()) ||
+    (p.properties || []).some((pr) => pr.toLowerCase().includes(search.toLowerCase()));
     const matchType = filterType === "Tous" || p.plant_type === filterType;
     return matchSearch && matchType;
   });
@@ -41,8 +41,8 @@ export default function PlantLibrary() {
       <div style={{ textAlign: "center", padding: "4rem" }}>
         <Leaf size={40} color="#87A96B" className="leaf-loading" style={{ margin: "0 auto 1rem" }} />
         <p style={{ fontFamily: "Inter, sans-serif", color: "#9AA889" }}>Chargement de la bibliothèque…</p>
-      </div>
-    );
+      </div>);
+
   }
 
   return (
@@ -65,57 +65,57 @@ export default function PlantLibrary() {
             className="aroma-input"
             placeholder="Rechercher une plante, propriété…"
             value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{ paddingLeft: "2.5rem" }}
-          />
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ paddingLeft: "2.5rem" }} />
+
         </div>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-          {PLANT_TYPES.map(type => (
-            <button
-              key={type}
-              onClick={() => setFilterType(type)}
-              style={{
-                padding: "0.45rem 0.9rem",
-                borderRadius: 50,
-                border: filterType === type ? "2px solid #87A96B" : "1.5px solid rgba(135,169,107,0.25)",
-                background: filterType === type ? "rgba(135,169,107,0.12)" : "transparent",
-                fontFamily: "Inter, sans-serif",
-                fontSize: "0.75rem",
-                color: filterType === type ? "#6B8F52" : "#7A6558",
-                fontWeight: filterType === type ? 600 : 400,
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-                whiteSpace: "nowrap"
-              }}
-            >
+          {PLANT_TYPES.map((type) =>
+          <button
+            key={type}
+            onClick={() => setFilterType(type)}
+            style={{
+              padding: "0.45rem 0.9rem",
+              borderRadius: 50,
+              border: filterType === type ? "2px solid #87A96B" : "1.5px solid rgba(135,169,107,0.25)",
+              background: filterType === type ? "rgba(135,169,107,0.12)" : "transparent",
+              fontFamily: "Inter, sans-serif",
+              fontSize: "0.75rem",
+              color: filterType === type ? "#6B8F52" : "#7A6558",
+              fontWeight: filterType === type ? 600 : 400,
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              whiteSpace: "nowrap"
+            }}>
+
               {type === "Tous" ? "Toutes" : TYPE_LABELS[type]}
             </button>
-          ))}
+          )}
         </div>
       </div>
 
-      {filtered.length === 0 ? (
-        <div className="aroma-card" style={{ padding: "3rem", textAlign: "center" }}>
+      {filtered.length === 0 ?
+      <div className="aroma-card" style={{ padding: "3rem", textAlign: "center" }}>
           <Leaf size={36} color="#B8D0A0" style={{ margin: "0 auto 1rem" }} />
           <p style={{ fontFamily: "Inter, sans-serif", color: "#9AA889" }}>
             {plants.length === 0 ? "La bibliothèque est vide. Ajoutez des plantes depuis le tableau de bord." : "Aucun résultat pour cette recherche."}
           </p>
-        </div>
-      ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem" }}>
-          {filtered.map(plant => (
-            <PlantCard key={plant.id} plant={plant} onSelect={setSelected} />
-          ))}
-        </div>
-      )}
+        </div> :
 
-      {selected && (
-        <PlantModal plant={selected} onClose={() => setSelected(null)} />
-      )}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem" }}>
+          {filtered.map((plant) =>
+        <PlantCard key={plant.id} plant={plant} onSelect={setSelected} />
+        )}
+        </div>
+      }
+
+      {selected &&
+      <PlantModal plant={selected} onClose={() => setSelected(null)} />
+      }
 
       <Disclaimer />
-    </div>
-  );
+    </div>);
+
 }
 
 function PlantCard({ plant, onSelect }) {
@@ -124,15 +124,15 @@ function PlantCard({ plant, onSelect }) {
       className="aroma-card"
       style={{ padding: "1.5rem", cursor: "pointer", transition: "transform 0.3s, box-shadow 0.3s" }}
       onClick={() => onSelect(plant)}
-      onMouseEnter={e => {
+      onMouseEnter={(e) => {
         e.currentTarget.style.transform = "translateY(-3px)";
         e.currentTarget.style.boxShadow = "0 10px 35px rgba(61,43,31,0.1)";
       }}
-      onMouseLeave={e => {
+      onMouseLeave={(e) => {
         e.currentTarget.style.transform = "translateY(0)";
         e.currentTarget.style.boxShadow = "0 4px 24px rgba(61,43,31,0.06)";
-      }}
-    >
+      }}>
+
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.85rem" }}>
         <div>
           <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.05rem", color: "#3D2B1F", marginBottom: "0.2rem" }}>
@@ -149,33 +149,33 @@ function PlantCard({ plant, onSelect }) {
         </div>
       </div>
 
-      {plant.plant_type && (
-        <span className="tag-sage" style={{ marginBottom: "0.85rem", display: "inline-block" }}>
+      {plant.plant_type &&
+      <span className="tag-sage" style={{ marginBottom: "0.85rem", display: "inline-block" }}>
           {TYPE_LABELS[plant.plant_type] || plant.plant_type}
         </span>
-      )}
+      }
 
-      {plant.properties && plant.properties.length > 0 && (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
-          {plant.properties.slice(0, 3).map((p, i) => (
-            <span key={i} style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: "0.7rem",
-              color: "#7A6558",
-              background: "rgba(61,43,31,0.05)",
-              padding: "0.2rem 0.5rem",
-              borderRadius: 6
-            }}>{p}</span>
-          ))}
-          {plant.properties.length > 3 && (
-            <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.7rem", color: "#9AA889" }}>
+      {plant.properties && plant.properties.length > 0 &&
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
+          {plant.properties.slice(0, 3).map((p, i) =>
+        <span key={i} style={{
+          fontFamily: "Inter, sans-serif",
+          fontSize: "0.7rem",
+          color: "#7A6558",
+          background: "rgba(61,43,31,0.05)",
+          padding: "0.2rem 0.5rem",
+          borderRadius: 6
+        }}>{p}</span>
+        )}
+          {plant.properties.length > 3 &&
+        <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.7rem", color: "#9AA889" }}>
               +{plant.properties.length - 3}
             </span>
-          )}
+        }
         </div>
-      )}
-    </div>
-  );
+      }
+    </div>);
+
 }
 
 function PlantModal({ plant, onClose }) {
@@ -201,8 +201,8 @@ function PlantModal({ plant, onClose }) {
           padding: "2rem",
           position: "relative"
         }}
-        onClick={e => e.stopPropagation()}
-      >
+        onClick={(e) => e.stopPropagation()}>
+
         <button
           onClick={onClose}
           style={{
@@ -218,23 +218,23 @@ function PlantModal({ plant, onClose }) {
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer"
-          }}
-        >
+          }}>
+
           <X size={16} color="#7A6558" />
         </button>
 
-        <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.6rem", color: "#3D2B1F", marginBottom: "0.3rem" }}>
+        <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.6rem", color: "#3D2B1F", marginBottom: "0.3rem" }} className="text-black">
           {plant.common_name}
         </h2>
         <em style={{ fontFamily: "Inter, sans-serif", fontSize: "0.85rem", color: "#9AA889", display: "block", marginBottom: "0.75rem" }}>
           {plant.latin_name} {plant.chemotype ? `CT ${plant.chemotype}` : ""}
         </em>
 
-        {plant.plant_type && (
-          <span className="tag-sage" style={{ marginBottom: "1.25rem", display: "inline-block" }}>
+        {plant.plant_type &&
+        <span className="tag-sage" style={{ marginBottom: "1.25rem", display: "inline-block" }}>
             {TYPE_LABELS[plant.plant_type]}
           </span>
-        )}
+        }
 
         {/* Safety Alerts */}
         {plant.is_photosensitizing && <AlertBanner type="photosensitizing" message="Évitez l'exposition solaire 12h après application." />}
@@ -247,46 +247,46 @@ function PlantModal({ plant, onClose }) {
         <TagSection title="Contre-indications" tags={plant.contraindications} color="sienna" />
         <TagSection title="Voies d'utilisation" tags={plant.usage_routes} color="sage" />
 
-        {plant.max_dilution_cutaneous && (
-          <div style={{ marginBottom: "1.25rem" }}>
+        {plant.max_dilution_cutaneous &&
+        <div style={{ marginBottom: "1.25rem" }}>
             <SectionTitle>Dilution cutanée max</SectionTitle>
             <div style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              padding: "0.5rem 1rem",
-              background: plant.max_dilution_cutaneous > 10 ? "rgba(160,82,45,0.08)" : "rgba(135,169,107,0.08)",
-              borderRadius: 8,
-              border: `1px solid ${plant.max_dilution_cutaneous > 10 ? "rgba(160,82,45,0.2)" : "rgba(135,169,107,0.2)"}`
-            }}>
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            padding: "0.5rem 1rem",
+            background: plant.max_dilution_cutaneous > 10 ? "rgba(160,82,45,0.08)" : "rgba(135,169,107,0.08)",
+            borderRadius: 8,
+            border: `1px solid ${plant.max_dilution_cutaneous > 10 ? "rgba(160,82,45,0.2)" : "rgba(135,169,107,0.2)"}`
+          }}>
               <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.4rem", fontWeight: 700, color: plant.max_dilution_cutaneous > 10 ? "#A0522D" : "#87A96B" }}>
                 {plant.max_dilution_cutaneous}%
               </span>
               {plant.max_dilution_cutaneous > 10 && <AlertBanner type="concentration" />}
             </div>
           </div>
-        )}
+        }
 
         <Section title="Notes de protocole" content={plant.protocol_notes} />
         <Section title="Notes olfactives" content={plant.aroma_notes} />
-        {plant.origin && (
-          <div style={{ fontFamily: "Inter, sans-serif", fontSize: "0.8rem", color: "#9AA889", marginBottom: "0.5rem" }}>
+        {plant.origin &&
+        <div style={{ fontFamily: "Inter, sans-serif", fontSize: "0.8rem", color: "#9AA889", marginBottom: "0.5rem" }}>
             🌍 Origine : {plant.origin}
           </div>
-        )}
+        }
 
         <Disclaimer />
       </div>
-    </div>
-  );
+    </div>);
+
 }
 
 function SectionTitle({ children }) {
   return (
     <div style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 600, color: "#87A96B", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.5rem" }}>
       {children}
-    </div>
-  );
+    </div>);
+
 }
 
 function Section({ title, content }) {
@@ -295,8 +295,8 @@ function Section({ title, content }) {
     <div style={{ marginBottom: "1.25rem" }}>
       <SectionTitle>{title}</SectionTitle>
       <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.87rem", color: "#5A4A3A", lineHeight: 1.65 }}>{content}</p>
-    </div>
-  );
+    </div>);
+
 }
 
 function TagSection({ title, tags, color }) {
@@ -305,10 +305,10 @@ function TagSection({ title, tags, color }) {
     <div style={{ marginBottom: "1.25rem" }}>
       <SectionTitle>{title}</SectionTitle>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
-        {tags.map((tag, i) => (
-          <span key={i} className={color === "sage" ? "tag-sage" : "tag-sienna"}>{tag}</span>
-        ))}
+        {tags.map((tag, i) =>
+        <span key={i} className={color === "sage" ? "tag-sage" : "tag-sienna"}>{tag}</span>
+        )}
       </div>
-    </div>
-  );
+    </div>);
+
 }
