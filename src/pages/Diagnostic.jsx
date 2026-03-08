@@ -202,7 +202,9 @@ Réponds maintenant en JSON strict selon le schéma fourni.`;
     setProtocol(null);
     setInput("");
     setRagContext("");
+    setRagReadingStrategy("");
     setRagLoaded(false);
+    setLoadingPhase("");
     startConversation();
   };
 
