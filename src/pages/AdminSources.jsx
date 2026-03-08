@@ -521,9 +521,7 @@ export default function AdminSources() {
         border: "1px solid rgba(135,169,107,0.15)"
       }}>
         <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.8rem", color: "#6B8F52", lineHeight: 1.6 }}>
-          💡 <strong>Comment ça fonctionne :</strong> Chaque livre est découpé en chunks de ~1500 caractères 
-          et indexé dans la base de données. Lors d'un diagnostic, l'IA recherche les passages les plus 
-          pertinents et les intègre dans son prompt pour des réponses basées sur vos sources.
+          💡 <strong>Comment ça fonctionne :</strong> Les ouvrages sont analysés de manière exhaustive par l'IA (méthode Long Context). Lors de la création d'une fiche ou d'un diagnostic, l'IA croise les données de l'ensemble des chapitres pour garantir une sécurité et une précision maximales.
         </p>
       </div>
     </div>

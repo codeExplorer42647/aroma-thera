@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import AlertBanner from "@/components/diagnostic/AlertBanner";
 import Disclaimer from "@/components/diagnostic/Disclaimer";
-import { Search, Leaf, X, Sun, Droplets, Baby, Shield, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, Leaf, X, Sun, Droplets, Baby, Sparkles, Loader2 } from "lucide-react";
 
 const PLANT_TYPES = ["Tous", "huile_essentielle", "hydrolat", "huile_vegetale", "plante_seche", "teinture"];
 const TYPE_LABELS = {
