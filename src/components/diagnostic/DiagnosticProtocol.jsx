@@ -1,7 +1,10 @@
+import { useState } from "react";
 import AlertBanner from "./AlertBanner";
+import IngredientModal from "./IngredientModal";
 import { Leaf, Droplets, Clock, Calendar, BookOpen, CheckCircle, Wind, Pill } from "lucide-react";
 
 export default function DiagnosticProtocol({ protocol }) {
+  const [selectedIngredient, setSelectedIngredient] = useState(null);
   const heIngredients = (protocol.synergy || []).filter(i => i.type !== "HV");
   const hvIngredient = protocol.carrier || null;
   const hasPhotosensitizing = heIngredients.some(i => i.is_photosensitizing);
