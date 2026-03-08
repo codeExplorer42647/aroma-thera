@@ -234,17 +234,39 @@ Réponds maintenant en JSON strict selon le schéma fourni.`;
         ))}
 
         {loading && (
-          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", padding: "0.75rem 1rem", marginBottom: "0.5rem" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem", padding: "0.75rem 1rem", marginBottom: "0.5rem" }}>
             <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg, #87A96B, #6B8F52)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <Leaf size={14} color="white" className="leaf-loading" />
+              {loadingPhase === "searching"
+                ? <Search size={14} color="white" className="leaf-loading" />
+                : loadingPhase === "analyzing"
+                  ? <BookOpen size={14} color="white" className="leaf-loading" />
+                  : <Leaf size={14} color="white" className="leaf-loading" />
+              }
             </div>
-            <div style={{ display: "flex", gap: 4 }}>
-              {[0, 1, 2].map(j => (
-                <div key={j} style={{
-                  width: 7, height: 7, borderRadius: "50%", background: "#87A96B",
-                  animation: `dotPulse 1.2s ease-in-out ${j * 0.2}s infinite`
-                }} />
-              ))}
+            <div>
+              <div style={{ display: "flex", gap: 4, marginBottom: "0.35rem" }}>
+                {[0, 1, 2].map(j => (
+                  <div key={j} style={{
+                    width: 7, height: 7, borderRadius: "50%", background: "#87A96B",
+                    animation: `dotPulse 1.2s ease-in-out ${j * 0.2}s infinite`
+                  }} />
+                ))}
+              </div>
+              {loadingPhase === "searching" && (
+                <div style={{ fontFamily: "Inter, sans-serif", fontSize: "0.75rem", color: "#87A96B", fontStyle: "italic" }}>
+                  Exploration de la table des matières des ouvrages de référence…
+                </div>
+              )}
+              {loadingPhase === "analyzing" && (
+                <div style={{ fontFamily: "Inter, sans-serif", fontSize: "0.75rem", color: "#A0522D", fontStyle: "italic" }}>
+                  Analyse exhaustive des chapitres sélectionnés en cours… {ragReadingStrategy && <span style={{ opacity: 0.8 }}>({ragReadingStrategy})</span>}
+                </div>
+              )}
+              {loadingPhase === "thinking" && (
+                <div style={{ fontFamily: "Inter, sans-serif", fontSize: "0.75rem", color: "#6B5744", fontStyle: "italic" }}>
+                  Synthèse croisée des sources et validation du protocole…
+                </div>
+              )}
             </div>
           </div>
         )}
