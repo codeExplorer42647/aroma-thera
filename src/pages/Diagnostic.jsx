@@ -278,6 +278,7 @@ Réponds maintenant en JSON strict selon le schéma fourni.`;
   };
 
   const handleReset = () => {
+    clearSession();
     setMessages([]);
     setProtocol(null);
     setInput("");
