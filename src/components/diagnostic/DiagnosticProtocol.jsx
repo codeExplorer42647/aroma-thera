@@ -72,12 +72,18 @@ export default function DiagnosticProtocol({ protocol }) {
             <div style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 600, color: "#87A96B", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "0.6rem" }}>
               Huile Végétale Porteuse
             </div>
-            <div style={{
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              padding: "0.75rem 1rem",
-              background: "rgba(135,169,107,0.06)",
-              borderRadius: 10, border: "1px solid rgba(135,169,107,0.15)"
-            }}>
+            <div
+              onClick={() => setSelectedIngredient({ ...hvIngredient, type: "HV" })}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                padding: "0.75rem 1rem",
+                background: "rgba(135,169,107,0.06)",
+                borderRadius: 10, border: "1px solid rgba(135,169,107,0.15)",
+                cursor: "pointer", transition: "all 0.18s ease"
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(135,169,107,0.12)"}
+              onMouseLeave={e => e.currentTarget.style.background = "rgba(135,169,107,0.06)"}
+            >
               <div>
                 <div style={{ fontFamily: "Inter, sans-serif", fontSize: "0.9rem", fontWeight: 600, color: "#3D2B1F" }}>
                   {hvIngredient.name}
@@ -87,6 +93,9 @@ export default function DiagnosticProtocol({ protocol }) {
                     {hvIngredient.rationale}
                   </div>
                 )}
+                <div style={{ fontFamily: "Inter, sans-serif", fontSize: "0.68rem", color: "#87A96B", marginTop: "0.2rem", fontStyle: "italic" }}>
+                  Cliquer pour la fiche détaillée →
+                </div>
               </div>
               <div style={{ textAlign: "right" }}>
                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.2rem", fontWeight: 700, color: "#6B8F52" }}>
