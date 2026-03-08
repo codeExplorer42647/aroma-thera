@@ -62,6 +62,7 @@ export default function PlantLibrary() {
     const plantData = {
       ...res,
       common_name: res.common_name || genName.trim(),
+      latin_name: res.latin_name || genName.trim(),
       properties: Array.isArray(res.properties) ? res.properties : [],
       indications: Array.isArray(res.indications) ? res.indications : [],
       contraindications: Array.isArray(res.contraindications) ? res.contraindications : [],
