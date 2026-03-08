@@ -150,6 +150,19 @@ Une synergie peut combiner plusieurs voies (ex. : voie cutanée + diffusion). Pr
 { "is_complete": true, "protocol": { ... } }        ← si diagnostic complet`;
 }
 
+// ─── Session persistence helpers ───────────────────────────────────────────────
+const SESSION_KEY = "aromathera_diagnostic";
+
+function saveSession(data) {
+  try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(data)); } catch (_) {}
+}
+function loadSession() {
+  try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch (_) { return null; }
+}
+function clearSession() {
+  try { sessionStorage.removeItem(SESSION_KEY); } catch (_) {}
+}
+
 // ─── Component ─────────────────────────────────────────────────────────────────
 export default function Diagnostic() {
   const [messages, setMessages] = useState([]);
@@ -163,9 +176,17 @@ export default function Diagnostic() {
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Start conversation on mount
+  // Restore or start conversation on mount
   useEffect(() => {
-    startConversation();
+    const saved = loadSession();
+    if (saved && saved.messages && saved.messages.length > 0) {
+      setMessages(saved.messages);
+      if (saved.protocol) setProtocol(saved.protocol);
+      if (saved.ragContext) { setRagContext(saved.ragContext); setRagLoaded(true); }
+      if (saved.ragReadingStrategy) setRagReadingStrategy(saved.ragReadingStrategy);
+    } else {
+      startConversation();
+    }
   }, []);
 
   useEffect(() => {
