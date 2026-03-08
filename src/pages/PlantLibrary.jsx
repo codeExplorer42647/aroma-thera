@@ -100,10 +100,92 @@ export default function PlantLibrary() {
         <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem", color: "#3D2B1F", marginBottom: "0.5rem" }}>
           Bibliothèque des Plantes
         </h1>
-        <p style={{ fontFamily: "Inter, sans-serif", color: "#7A6558", fontSize: "0.9rem" }}>
+        <p style={{ fontFamily: "Inter, sans-serif", color: "#7A6558", fontSize: "0.9rem", marginBottom: "1rem" }}>
           {plants.length} plantes & huiles référencées
         </p>
+        <button
+          onClick={() => { setShowGenModal(true); setGenName(""); }}
+          style={{
+            display: "inline-flex", alignItems: "center", gap: "0.5rem",
+            background: "linear-gradient(135deg, #6B8F52, #4A6B38)",
+            color: "white", border: "none", borderRadius: 50,
+            padding: "0.6rem 1.4rem", fontFamily: "Inter, sans-serif",
+            fontSize: "0.85rem", fontWeight: 600, cursor: "pointer",
+            boxShadow: "0 4px 15px rgba(135,169,107,0.35)", transition: "all 0.2s ease"
+          }}
+          onMouseEnter={e => e.currentTarget.style.transform = "translateY(-1px)"}
+          onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
+        >
+          <Sparkles size={15} />
+          Générer une plante (IA)
+        </button>
       </div>
+
+      {/* Generate Modal */}
+      {showGenModal && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 200,
+          background: "rgba(61,43,31,0.45)", backdropFilter: "blur(4px)",
+          display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem"
+        }} onClick={(e) => e.target === e.currentTarget && !generating && setShowGenModal(false)}>
+          <div className="aroma-card" style={{ width: "100%", maxWidth: 440, padding: "2rem" }}>
+            {generating ? (
+              <div style={{ textAlign: "center", padding: "1.5rem 0" }}>
+                <Loader2 size={36} color="#87A96B" style={{ margin: "0 auto 1rem", animation: "spin 1s linear infinite" }} />
+                <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#3D2B1F", marginBottom: "0.3rem" }}>
+                  Analyse de la littérature en cours...
+                </p>
+                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.8rem", color: "#9AA889" }}>
+                  Price, Bone, Rhind et autres sources consultées
+                </p>
+                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+              </div>
+            ) : (
+              <>
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.25rem", color: "#3D2B1F", marginBottom: "0.4rem" }}>
+                  Générer une fiche de plante
+                </h3>
+                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.82rem", color: "#9AA889", marginBottom: "1.25rem" }}>
+                  L'IA analyse les sources médicales indexées pour créer une fiche complète.
+                </p>
+                <input
+                  type="text"
+                  className="aroma-input"
+                  placeholder="Ex : Lavande vraie, Tea tree, Eucalyptus…"
+                  value={genName}
+                  onChange={e => setGenName(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && generatePlantProfile()}
+                  autoFocus
+                  style={{ marginBottom: "1.25rem" }}
+                />
+                <div style={{ display: "flex", gap: "0.75rem", justifyContent: "flex-end" }}>
+                  <button
+                    onClick={() => setShowGenModal(false)}
+                    style={{ background: "transparent", border: "1px solid rgba(61,43,31,0.15)", borderRadius: 50, padding: "0.55rem 1.25rem", fontFamily: "Inter, sans-serif", fontSize: "0.85rem", color: "#7A6558", cursor: "pointer" }}
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    onClick={generatePlantProfile}
+                    disabled={!genName.trim()}
+                    style={{
+                      background: genName.trim() ? "linear-gradient(135deg, #6B8F52, #4A6B38)" : "rgba(135,169,107,0.3)",
+                      color: "white", border: "none", borderRadius: 50,
+                      padding: "0.55rem 1.4rem", fontFamily: "Inter, sans-serif",
+                      fontSize: "0.85rem", fontWeight: 600,
+                      cursor: genName.trim() ? "pointer" : "not-allowed",
+                      display: "inline-flex", alignItems: "center", gap: "0.4rem"
+                    }}
+                  >
+                    <Sparkles size={14} />
+                    Générer
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Search & Filter */}
       <div style={{ display: "flex", gap: "1rem", marginBottom: "1.75rem", flexWrap: "wrap" }}>
